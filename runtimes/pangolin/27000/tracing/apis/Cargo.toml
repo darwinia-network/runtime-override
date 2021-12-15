@@ -19,11 +19,11 @@ serde          = { version = "1.0", features = ["derive"], optional = true }
 serde_json     = { version = "1.0", optional = true }
 # paritytech
 codec      = { package = "parity-scale-codec", version = "2.2", default-features = false }
-sp-api     = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-core    = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-io      = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-runtime = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-std     = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
+sp-api     = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-core    = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-io      = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-runtime = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-std     = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
 
 
 [features]

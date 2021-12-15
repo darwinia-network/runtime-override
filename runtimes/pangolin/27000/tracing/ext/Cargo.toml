@@ -16,9 +16,9 @@ ethereum-types = { version = "0.11.0", default-features = false }
 dp-evm-trace-events = { path = "../events", default-features = false }
 # paritytech
 codec                = { package = "parity-scale-codec", version = "2.2", default-features = false }
-sp-externalities     = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-runtime-interface = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
-sp-std               = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
+sp-externalities     = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-runtime-interface = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
+sp-std               = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
 
 [features]
 default = [ "std" ]
