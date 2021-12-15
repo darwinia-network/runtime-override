@@ -5,7 +5,7 @@ use pallet_session::historical::IdentificationTuple;
 use crate::*;
 
 impl Config for Runtime {
-	type Event = Event;
-	type IdentificationTuple = IdentificationTuple<Self>;
-	type OnOffenceHandler = Staking;
+    type Event = Event;
+    type IdentificationTuple = IdentificationTuple<Self>;
+    type OnOffenceHandler = Staking;
 }

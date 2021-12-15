@@ -8,6 +8,6 @@ use crate::*;
 use darwinia_staking::{Exposure, ExposureOf};
 
 impl Config for Runtime {
-	type FullIdentification = Exposure<AccountId, Balance, Balance>;
-	type FullIdentificationOf = ExposureOf<Runtime>;
+    type FullIdentification = Exposure<AccountId, Balance, Balance>;
+    type FullIdentificationOf = ExposureOf<Runtime>;
 }

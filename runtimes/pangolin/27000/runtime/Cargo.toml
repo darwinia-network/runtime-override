@@ -58,6 +58,13 @@ from-substrate-issuing                  = { default-features = false, git = "htt
 module-transaction-pause                = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
 to-ethereum-backing                     = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
 to-tron-backing                         = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
+# dvm trace
+dp-evm-trace-apis   = { default-features = false, path = "../tracing/apis" }
+dp-evm-trace-events = { optional = true, default-features = false, path = "../tracing/events" }
+dp-evm-trace-ext    = { default-features = false, path = "../tracing/ext" }
+dp-evm-tracer       = { optional = true, default-features = false, path = "../tracing/tracer" }
+rlp                 = { optional = true, default-features = false, version = "0.5" }
+sha3                = { optional = true, default-features = false, version = "0.8" }
 # paritytech
 bp-message-dispatch                        = { default-features = false, git = "https://github.com/darwinia-network/parity-bridges-common", tag = "darwinia-v0.11.6-3" }
 bp-messages                                = { default-features = false, git = "https://github.com/darwinia-network/parity-bridges-common", tag = "darwinia-v0.11.6-3" }
@@ -122,7 +129,7 @@ sp-version                                 = { default-features = false, git = "
 substrate-wasm-builder = { git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
 
 [features]
-default = ["std"]
+default = ["std", "evm-tracing"]
 
 std = [
 	# crates.io
@@ -170,6 +177,13 @@ std = [
 	"module-transaction-pause/std",
 	"to-ethereum-backing/std",
 	"to-tron-backing/std",
+	# trace
+	"dp-evm-trace-apis/std",
+	"dp-evm-trace-events/std",
+	"dp-evm-trace-ext/std",
+	"dp-evm-tracer/std",
+	"rlp/std",
+	"sha3/std",
 	# paritytech
 	"bp-message-dispatch/std",
 	"bp-messages/std",
@@ -256,4 +270,11 @@ try-runtime = [
 	"darwinia-staking/try-runtime",
 	"dvm-ethereum/try-runtime",
 	"to-ethereum-backing/try-runtime",
+]
+
+evm-tracing = [
+	"dp-evm-trace-events",
+	"dp-evm-tracer",
+	"rlp",
+	"sha3"
 ]

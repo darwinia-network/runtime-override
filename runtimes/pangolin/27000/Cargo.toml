@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    'runtime',
+    'tracing/apis',
+    'tracing/events',
+    'tracing/ext',
+    'tracing/tracer',
+]
+
+[profile.release]
+panic = 'unwind'

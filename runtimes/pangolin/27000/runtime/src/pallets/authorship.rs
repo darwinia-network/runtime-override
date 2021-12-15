@@ -5,12 +5,12 @@ use pallet_session::FindAccountFromAuthorIndex;
 use crate::*;
 
 frame_support::parameter_types! {
-	pub const UncleGenerations: BlockNumber = 5;
+    pub const UncleGenerations: BlockNumber = 5;
 }
 
 impl Config for Runtime {
-	type FindAuthor = FindAccountFromAuthorIndex<Self, Babe>;
-	type UncleGenerations = UncleGenerations;
-	type FilterUncle = ();
-	type EventHandler = (Staking, ImOnline);
+    type FindAuthor = FindAccountFromAuthorIndex<Self, Babe>;
+    type UncleGenerations = UncleGenerations;
+    type FilterUncle = ();
+    type EventHandler = (Staking, ImOnline);
 }

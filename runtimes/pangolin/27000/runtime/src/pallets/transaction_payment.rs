@@ -2,7 +2,7 @@
 use smallvec::smallvec;
 // --- paritytech ---
 use frame_support::weights::{
-	WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial,
+    WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial,
 };
 use pallet_transaction_payment::{Config, CurrencyAdapter};
 use sp_runtime::Perbill;
@@ -21,27 +21,27 @@ use crate::*;
 ///   - Setting it to `1` will cause the literal `#[weight = x]` values to be charged.
 pub struct WeightToFee;
 impl WeightToFeePolynomial for WeightToFee {
-	type Balance = Balance;
-	fn polynomial() -> WeightToFeeCoefficients<Self::Balance> {
-		// in Crab, extrinsic base weight (smallest non-zero weight) is mapped to 100 MILLI:
-		let p = 100 * MILLI;
-		let q = Balance::from(ExtrinsicBaseWeight::get());
-		smallvec![WeightToFeeCoefficient {
-			degree: 1,
-			negative: false,
-			coeff_frac: Perbill::from_rational(p % q, q),
-			coeff_integer: p / q,
-		}]
-	}
+    type Balance = Balance;
+    fn polynomial() -> WeightToFeeCoefficients<Self::Balance> {
+        // in Crab, extrinsic base weight (smallest non-zero weight) is mapped to 100 MILLI:
+        let p = 100 * MILLI;
+        let q = Balance::from(ExtrinsicBaseWeight::get());
+        smallvec![WeightToFeeCoefficient {
+            degree: 1,
+            negative: false,
+            coeff_frac: Perbill::from_rational(p % q, q),
+            coeff_integer: p / q,
+        }]
+    }
 }
 
 frame_support::parameter_types! {
-	pub const TransactionByteFee: Balance = 5 * MILLI;
+    pub const TransactionByteFee: Balance = 5 * MILLI;
 }
 
 impl Config for Runtime {
-	type OnChargeTransaction = CurrencyAdapter<Ring, DealWithFees<Self>>;
-	type TransactionByteFee = TransactionByteFee;
-	type WeightToFee = WeightToFee;
-	type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
+    type OnChargeTransaction = CurrencyAdapter<Ring, DealWithFees<Self>>;
+    type TransactionByteFee = TransactionByteFee;
+    type WeightToFee = WeightToFee;
+    type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
 }
