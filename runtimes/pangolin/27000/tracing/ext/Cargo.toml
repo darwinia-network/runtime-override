@@ -11,7 +11,7 @@ version     = "2.7.0"
 
 [dependencies]
 # crates.io
-ethereum-types = { version = "0.12.0", default-features = false }
+ethereum-types = { version = "0.11.0", default-features = false }
 # darwinia-network
 dp-evm-trace-events = { path = "../events", default-features = false }
 # paritytech

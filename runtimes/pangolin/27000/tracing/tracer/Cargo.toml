@@ -19,7 +19,7 @@ sp-io      = { default-features = false, git = "https://github.com/darwinia-netw
 sp-runtime = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
 sp-std     = { default-features = false, git = "https://github.com/darwinia-network/darwinia-common", rev = "567af4d9cbf16694cea7823d2087a3872d2d26c5" }
 # crate.io
-ethereum-types = { version = "0.12.0", default-features = false }
+ethereum-types = { version = "0.11.0", default-features = false }
 evm            = { git = "https://github.com/darwinia-network/evm", branch = "darwinia", default-features = false, features = [ "with-codec" ] }
 evm-gasometer  = { git = "https://github.com/darwinia-network/evm", branch = "darwinia", default-features = false }
 evm-runtime    = { git = "https://github.com/darwinia-network/evm", branch = "darwinia", default-features = false }
