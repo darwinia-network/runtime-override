@@ -20,9 +20,9 @@ sp-runtime = { default-features = false, git = "https://github.com/darwinia-netw
 sp-std     = { default-features = false, git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
 # crate.io
 ethereum-types = { version = "0.11.0", default-features = false }
-evm            = { git = "https://github.com/darwinia-network/evm", branch = "pangolin-27000-runtime-override", default-features = false, features = [ "with-codec" ] }
-evm-gasometer  = { git = "https://github.com/darwinia-network/evm", branch = "pangolin-27000-runtime-override", default-features = false }
-evm-runtime    = { git = "https://github.com/darwinia-network/evm", branch = "pangolin-27000-runtime-override", default-features = false }
+evm            = { version = "0.27", default-features = false, features = [ "with-codec" ] }
+evm-gasometer  = { version = "0.27", default-features = false }
+evm-runtime    = { version = "0.27", default-features = false }
 
 [features]
 default = [ "std" ]

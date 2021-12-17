@@ -9,3 +9,8 @@ members = [
 
 [profile.release]
 panic = 'unwind'
+
+[patch.crates-io]
+evm           = { git = "https://github.com/darwinia-network/evm", branch = "v0.27.1-runtime-override"}
+evm-gasometer = { git = "https://github.com/darwinia-network/evm", branch = "v0.27.1-runtime-override" }
+evm-runtime   = { git = "https://github.com/darwinia-network/evm", branch = "v0.27.1-runtime-override" }
