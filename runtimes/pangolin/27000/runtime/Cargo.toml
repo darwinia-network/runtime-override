@@ -129,8 +129,7 @@ sp-version                                 = { default-features = false, git = "
 substrate-wasm-builder = { git = "https://github.com/darwinia-network/substrate", tag = "darwinia-v0.11.6-1" }
 
 [features]
-# default = ["std", "evm-tracing"]
-default = ["std"]
+default = ["std", "evm-tracing"]
 
 std = [
 	# crates.io
