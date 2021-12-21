@@ -4,17 +4,21 @@ Inspired by [Moonbeam Runtime Overrives](https://github.com/PureStake/moonbeam-r
 
 ### Install srtool
 
+```sh
+$ cargo install --git https://github.com/chevdor/srtool-cli
+```
+
 ## Usage
 
 ```sh
-./scripts/create-tracing-runtime.sh --help
+$ ./scripts/create-tracing-runtime.sh --help
   Usage:
     create-tracing-runtime.sh <network> <node_version> <runtime_version>
 
   Args:
     network:          Only support pangolin now.
-    node_version:     Release node version, such as v2.7.0.
-    runtime_version:  Runtime release version.
+    node_version:     Node release version, such as v2.7.0.
+    runtime_version:  Runtime release version, such as 27000.
 ```
 
 Example:
