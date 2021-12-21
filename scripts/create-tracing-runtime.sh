@@ -6,21 +6,19 @@ REPO_PATH="$( cd "$( dirname "$0" )" && cd ../ && pwd )"
 
 NETWORK=$1
 NODE_VERSION=$2
-RUNTIME_VERSION=$3
 
 import_help() {
   cat << EOF
   Usage:
-    create-tracing-runtime.sh <network> <node_version> <runtime_version>
+    create-tracing-runtime.sh <network> <node_version>
 
   Args:
     network:          Only support pangolin now.
     node_version:     Release node version, such as v2.7.0.
-    runtime_version:  Runtime release version.
 EOF
 }
 
-if [[ "${NETWORK}" != "pangolin" ]] || [ -z ${NODE_VERSION} ] || [ -z ${RUNTIME_VERSION} ]; then
+if [[ "${NETWORK}" != "pangolin" ]] || [ -z ${NODE_VERSION} ]; then
     echo "The command arguments not correct, please check again."
     import_help
     exit 1
@@ -66,8 +64,11 @@ stdbuf -oL $CMD | {
         JSON="$line"
     done
     # Copy wasm blob and josn digest in git repository
-    Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
-    cp $Z_WASM ${REPO_PATH}/wasm/${NETWORK}/${NETWORK}-runtime-${RUNTIME_VERSION}-tracing-runtime.wasm
+    WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
+    WASM_VERSION=`echo $JSON | jq -r .runtimes.compressed.subwasm.core_version`
+    RUNTIME_VERSION=`echo $WASM_VERSION | cut -d " " -f 1 | cut -d - -f 2`
+
+    cp $WASM ${REPO_PATH}/wasm/${NETWORK}/${NETWORK}-runtime-${RUNTIME_VERSION}-tracing-runtime.wasm
     echo $JSON > ${REPO_PATH}/wasm-digest/${NETWORK}/${NETWORK}-runtime-${RUNTIME_VERSION}-tracing-runtime.json
 }
 cd ../..
