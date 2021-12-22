@@ -14,7 +14,7 @@ import_help() {
 
   Args:
     network:          Only support pangolin now.
-    node_version:     Release node version, such as v2.7.0.
+    node_version:     Release node version, such as main or v2.7.0.
 EOF
 }
 
@@ -51,6 +51,9 @@ sed -i "s/path = \"..\/..\/..\/primitives\/[[:print:]]*\"/git = \"https:\/\/gith
 
 echo "Enable evm-tracing feature default"
 sed -i -e 's/\[\s*"std"\s*\]/\[ "std", "evm-tracing" \]/g' ${REPO_PATH}/tmp/node/runtime/${NETWORK}/Cargo.toml
+
+echo "Add evm patch.crates-io"
+cat ${REPO_PATH}/tmp/darwinia-common/Cargo.toml | grep "evm" | tail -n 3 >> ${REPO_PATH}/tmp/node/Cargo.toml
 
 echo "Build tracing runtime"
 cd ${REPO_PATH}/tmp/node

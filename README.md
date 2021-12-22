@@ -17,12 +17,12 @@ $ ./scripts/create-tracing-runtime.sh --help
 
   Args:
     network:          Only support pangolin now.
-    node_version:     Node release version, such as v2.7.0.
+    node_version:     Node release version, such as main or v2.7.0.
 ```
 
 Example:
 
 ```sh
-$ /scripts/create-tracing-runtime.sh pangolin v2.7.2
+$ /scripts/create-tracing-runtime.sh pangolin main
 ```
 
