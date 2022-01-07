@@ -1,28 +1,12 @@
 # Darwinia Runtime Overrides
 
-Inspired by [Moonbeam Runtime Overrives](https://github.com/PureStake/moonbeam-runtime-overrides)
-
-### Install srtool
-
-```sh
-$ cargo install --git https://github.com/chevdor/srtool-cli
 ```
+USAGE:
+    runtime-overrides [OPTIONS] --runtime <CHAIN>
 
-## Usage
-
-```sh
-$ ./scripts/create-tracing-runtime.sh --help
-  Usage:
-    create-tracing-runtime.sh <network> <node_version>
-
-  Args:
-    network:          Only support pangolin now.
-    node_version:     Node release version, such as main or v2.7.0.
+OPTIONS:
+    -h, --help               Print help information
+    -r, --runtime <CHAIN>    Specific runtime (non case sensitive) [possible values: darwinia, crab,
+                             pangoro, pangolin]
+    -t, --target <VALUE>     Specific branch/commit/tag [default: main]
 ```
-
-Example:
-
-```sh
-$ /scripts/create-tracing-runtime.sh pangolin main
-```
-
