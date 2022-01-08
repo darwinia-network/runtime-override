@@ -127,10 +127,7 @@ fn main() -> Result<()> {
 
 	env::set_current_dir("../../")?;
 
-	let name_prefix = format!(
-		"{}-runtime-{}-tracing-runtime",
-		runtime_lowercase_name, target
-	);
+	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
 
 	create_dir_unchecked("wasms")?;
 	create_dir_unchecked("wasm-digests")?;
