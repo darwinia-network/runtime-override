@@ -128,11 +128,13 @@ fn main() -> Result<()> {
 	env::set_current_dir("../../")?;
 
 	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
+	let wasms_dir = format!("overridden-runtimes/{}/wasms", runtime_lowercase_name);
+	let digests_dir = format!("overridden-runtimes/{}/digests", runtime_lowercase_name);
 
-	create_dir_unchecked("wasms")?;
-	create_dir_unchecked("wasm-digests")?;
+	create_dir_unchecked(&wasms_dir)?;
+	create_dir_unchecked(&digests_dir)?;
 
-	let wasm = format!("wasms/{}.compact.wasm", name_prefix);
+	let wasm = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
 
 	fs::rename(
 		format!(
@@ -143,7 +145,7 @@ fn main() -> Result<()> {
 	)?;
 
 	let wasm = Subwasm::new(&Source::File(wasm.into()));
-	let runtime_info = File::create(format!("wasm-digests/{}.json", name_prefix))?;
+	let runtime_info = File::create(format!("{}/{}.json", digests_dir, name_prefix))?;
 
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
 
