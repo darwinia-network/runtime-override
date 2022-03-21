@@ -138,7 +138,7 @@ fn main() -> Result<()> {
 
 	fs::rename(
 		format!(
-			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.wasm",
+			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
 			runtime_repository, runtime_lowercase_name, runtime_lowercase_name,
 		),
 		&wasm,
