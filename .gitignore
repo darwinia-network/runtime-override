@@ -12,5 +12,3 @@ target
 # Build Data
 build
 
-# WASMS
-overridden-runtimes
