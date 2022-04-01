@@ -9,6 +9,7 @@ use std::{
 use anyhow::Result;
 use clap::{ArgEnum, Parser};
 use wasm_loader::Source;
+use ansi_term::Colour::Yellow;
 // --- github ---
 use subwasmlib::Subwasm;
 
@@ -80,26 +81,18 @@ struct Cli {
 fn main() -> Result<()> {
 	let Cli { runtime, target } = Cli::parse();
 
-	create_dir_unchecked("build")?;
-
-	let runtime_repository = runtime.repository();
-
-	if !Path::new(runtime_repository).is_dir() {
+	let runtime_source_code_path = format!("build/{}/{}", runtime.repository(), target);
+	if !Path::new(&runtime_source_code_path).exists() {
 		run(
 			"git",
-			&[
-				"clone",
-				&runtime.github(),
-				&format!("build/{}", runtime_repository),
-			],
+			&["clone", &runtime.github(), &runtime_source_code_path],
 		)?;
 	}
 
-	env::set_current_dir(format!("build/{}", runtime_repository))?;
+	env::set_current_dir(runtime_source_code_path)?;
 
 	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
 	let runtime_lowercase_name = runtime.lowercase_name();
-
 	run("git", &["fetch", "--all"])?;
 	run("git", &["checkout", &target])?;
 	run(
@@ -125,7 +118,7 @@ fn main() -> Result<()> {
 		],
 	)?;
 
-	env::set_current_dir("../../")?;
+	env::set_current_dir("../../../")?;
 
 	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
 	let wasms_dir = format!("overridden-runtimes/{}/wasms", runtime_lowercase_name);
@@ -134,20 +127,26 @@ fn main() -> Result<()> {
 	create_dir_unchecked(&wasms_dir)?;
 	create_dir_unchecked(&digests_dir)?;
 
-	let wasm = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
+	let wasm_path = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
+	let digest_path = format!("{}/{}.json", digests_dir, name_prefix);
 
 	fs::rename(
 		format!(
-			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
-			runtime_repository, runtime_lowercase_name, runtime_lowercase_name,
+			"build/{}/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
+			runtime.repository(),
+			target,
+			runtime_lowercase_name,
+			runtime_lowercase_name,
 		),
-		&wasm,
+		&wasm_path,
 	)?;
 
-	let wasm = Subwasm::new(&Source::File(wasm.into()));
-	let runtime_info = File::create(format!("{}/{}.json", digests_dir, name_prefix))?;
-
+	let wasm = Subwasm::new(&Source::File(wasm_path.clone().into()));
+	let runtime_info = File::create(&digest_path)?;
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
+
+	println!("{} {}", Yellow.paint("The generated wasm binary: "), Yellow.paint(wasm_path));
+	println!("{} {}", Yellow.paint("The generated wasm dejest: "), Yellow.paint(digest_path));
 
 	Ok(())
 }

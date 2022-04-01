@@ -8,6 +8,7 @@ version = "0.1.0"
 anyhow     = { version = "1.0" }
 clap       = { version = "3.0", features = ["derive"] }
 serde_json = { version = "1.0" }
+ansi_term  = { version = "0.12.1" }
 # github
 subwasmlib  = { version = "0.16", git = "https://github.com/chevdor/subwasm" }
 wasm-loader = { version = "0.16", git = "https://github.com/chevdor/subwasm" }
