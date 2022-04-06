@@ -1,16 +1,16 @@
-// --- std ---
+pub use anyhow::Result as AnyResult;
+
 use std::{
 	env,
 	fs::{self, File},
 	path::Path,
 	process::{Command, Stdio},
 };
-// --- crates.io ---
-use anyhow::Result;
+
 use clap::{ArgEnum, Parser};
-use wasm_loader::Source;
-// --- github ---
+
 use subwasmlib::Subwasm;
+use wasm_loader::Source;
 
 macro_rules! match_runtimes {
 	($self:ident, $a:expr, $b:expr) => {
@@ -77,25 +77,18 @@ struct Cli {
 	target: String,
 }
 
-fn main() -> Result<()> {
+fn main() -> AnyResult<()> {
 	let Cli { runtime, target } = Cli::parse();
+	let runtime_source_code_path = format!("build/{}/{}", runtime.repository(), target);
 
-	create_dir_unchecked("build")?;
-
-	let runtime_repository = runtime.repository();
-
-	if !Path::new(runtime_repository).is_dir() {
+	if !Path::new(&runtime_source_code_path).exists() {
 		run(
 			"git",
-			&[
-				"clone",
-				&runtime.github(),
-				&format!("build/{}", runtime_repository),
-			],
+			&["clone", &runtime.github(), &runtime_source_code_path],
 		)?;
 	}
 
-	env::set_current_dir(format!("build/{}", runtime_repository))?;
+	env::set_current_dir(runtime_source_code_path)?;
 
 	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
 	let runtime_lowercase_name = runtime.lowercase_name();
@@ -125,7 +118,7 @@ fn main() -> Result<()> {
 		],
 	)?;
 
-	env::set_current_dir("../../")?;
+	env::set_current_dir("../../../")?;
 
 	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
 	let wasms_dir = format!("overridden-runtimes/{}/wasms", runtime_lowercase_name);
@@ -134,25 +127,32 @@ fn main() -> Result<()> {
 	create_dir_unchecked(&wasms_dir)?;
 	create_dir_unchecked(&digests_dir)?;
 
-	let wasm = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
+	let wasm_path = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
+	let digest_path = format!("{}/{}.json", digests_dir, name_prefix);
 
 	fs::rename(
 		format!(
-			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
-			runtime_repository, runtime_lowercase_name, runtime_lowercase_name,
+			"build/{}/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
+			runtime.repository(),
+			target,
+			runtime_lowercase_name,
+			runtime_lowercase_name,
 		),
-		&wasm,
+		&wasm_path,
 	)?;
 
-	let wasm = Subwasm::new(&Source::File(wasm.into()));
-	let runtime_info = File::create(format!("{}/{}.json", digests_dir, name_prefix))?;
+	let wasm = Subwasm::new(&Source::File(wasm_path.clone().into()));
+	let runtime_info = File::create(&digest_path)?;
 
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
+
+	println!("Generated WASM:   {}", wasm_path);
+	println!("Generated digest: {}", digest_path);
 
 	Ok(())
 }
 
-fn create_dir_unchecked(path: &str) -> Result<()> {
+fn create_dir_unchecked(path: &str) -> AnyResult<()> {
 	if !Path::new(path).exists() {
 		fs::create_dir_all(path)?;
 	}
@@ -160,7 +160,7 @@ fn create_dir_unchecked(path: &str) -> Result<()> {
 	Ok(())
 }
 
-fn run(program: &str, args: &[&str]) -> Result<()> {
+fn run(program: &str, args: &[&str]) -> AnyResult<()> {
 	Command::new(program)
 		.args(args)
 		.stderr(Stdio::inherit())
