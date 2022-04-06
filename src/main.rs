@@ -1,17 +1,16 @@
-// --- std ---
+pub use anyhow::Result as AnyResult;
+
 use std::{
 	env,
 	fs::{self, File},
 	path::Path,
 	process::{Command, Stdio},
 };
-// --- crates.io ---
-use anyhow::Result;
+
 use clap::{ArgEnum, Parser};
-use wasm_loader::Source;
-use ansi_term::Colour::Yellow;
-// --- github ---
+
 use subwasmlib::Subwasm;
+use wasm_loader::Source;
 
 macro_rules! match_runtimes {
 	($self:ident, $a:expr, $b:expr) => {
@@ -78,10 +77,10 @@ struct Cli {
 	target: String,
 }
 
-fn main() -> Result<()> {
+fn main() -> AnyResult<()> {
 	let Cli { runtime, target } = Cli::parse();
-
 	let runtime_source_code_path = format!("build/{}/{}", runtime.repository(), target);
+
 	if !Path::new(&runtime_source_code_path).exists() {
 		run(
 			"git",
@@ -93,6 +92,7 @@ fn main() -> Result<()> {
 
 	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
 	let runtime_lowercase_name = runtime.lowercase_name();
+
 	run("git", &["fetch", "--all"])?;
 	run("git", &["checkout", &target])?;
 	run(
@@ -143,15 +143,16 @@ fn main() -> Result<()> {
 
 	let wasm = Subwasm::new(&Source::File(wasm_path.clone().into()));
 	let runtime_info = File::create(&digest_path)?;
+
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
 
-	println!("{} {}", Yellow.paint("The generated wasm binary: "), Yellow.paint(wasm_path));
-	println!("{} {}", Yellow.paint("The generated wasm dejest: "), Yellow.paint(digest_path));
+	println!("Generated WASM:   {}", wasm_path);
+	println!("Generated digest: {}", digest_path);
 
 	Ok(())
 }
 
-fn create_dir_unchecked(path: &str) -> Result<()> {
+fn create_dir_unchecked(path: &str) -> AnyResult<()> {
 	if !Path::new(path).exists() {
 		fs::create_dir_all(path)?;
 	}
@@ -159,7 +160,7 @@ fn create_dir_unchecked(path: &str) -> Result<()> {
 	Ok(())
 }
 
-fn run(program: &str, args: &[&str]) -> Result<()> {
+fn run(program: &str, args: &[&str]) -> AnyResult<()> {
 	Command::new(program)
 		.args(args)
 		.stderr(Stdio::inherit())
