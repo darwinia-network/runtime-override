@@ -79,8 +79,9 @@ struct Cli {
 
 fn main() -> AnyResult<()> {
 	let Cli { runtime, target } = Cli::parse();
-	let runtime_source_code_path = format!("build/{}/{}", runtime.repository(), target);
+	let runtime_source_code_path = format!("build/{}", runtime.repository());
 
+	// TODO: check if the folder is empty
 	if !Path::new(&runtime_source_code_path).exists() {
 		run(
 			"git",
@@ -90,6 +91,7 @@ fn main() -> AnyResult<()> {
 
 	env::set_current_dir(runtime_source_code_path)?;
 
+	// TODO: switch to the workspace, use their toolchain configs
 	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
 	let runtime_lowercase_name = runtime.lowercase_name();
 
