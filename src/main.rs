@@ -55,8 +55,8 @@ impl Runtime {
 
 #[derive(Debug, Parser)]
 struct Cli {
+	/// Specific runtime (non case sensitive)
 	#[clap(
-		help = "Specific runtime (non case sensitive)",
 		arg_enum,
 		short,
 		long,
@@ -66,8 +66,8 @@ struct Cli {
 		value_name = "CHAIN"
 	)]
 	runtime: Runtime,
+	/// Specific branch/commit/tag.
 	#[clap(
-		help = "Specific branch/commit/tag",
 		short,
 		long,
 		takes_value = true,
@@ -120,7 +120,7 @@ fn main() -> AnyResult<()> {
 		],
 	)?;
 
-	env::set_current_dir("../../../")?;
+	env::set_current_dir("../../")?;
 
 	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
 	let wasms_dir = format!("overridden-runtimes/{}/wasms", runtime_lowercase_name);
@@ -134,9 +134,8 @@ fn main() -> AnyResult<()> {
 
 	fs::rename(
 		format!(
-			"build/{}/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
+			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
 			runtime.repository(),
-			target,
 			runtime_lowercase_name,
 			runtime_lowercase_name,
 		),
