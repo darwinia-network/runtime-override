@@ -5,7 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 anyhow     = { version = "1.0" }
-clap       = { version = "3.1", features = ["derive"] }
+clap       = { version = "3.2", features = ["derive"] }
 serde_json = { version = "1.0" }
 
 subwasmlib  = { version = "0.16", git = "https://github.com/chevdor/subwasm" }
