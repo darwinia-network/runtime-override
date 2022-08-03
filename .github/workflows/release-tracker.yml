@@ -1,7 +1,7 @@
 name: Release tracker
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 env:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install runtime-overrides $${{ env.RUNTIME_OVERRIDES_VERSION }}
+      - name: Install runtime-overrides ${{ env.RUNTIME_OVERRIDES_VERSION }}
         run: |
           curl -L ${{ env.RUNTIME_OVERRIDES_LINK }}/${{ env.RUNTIME_OVERRIDES_VERSION }}/runtime-overrides.tar.zst | tar --zst -xv
           sudo mv runtime-overrides /usr/bin
