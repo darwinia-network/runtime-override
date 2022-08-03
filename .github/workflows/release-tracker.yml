@@ -1,0 +1,18 @@
+name: Release tracker
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+jobs:
+  track-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch latest code
+        uses: actions/checkout@v3
+      - name: Run
+        run: python3 .github/release-tracker.py
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: AurevoirXavier
+          commit_user_email: xavier@inv.cafe
+          commit_author: AurevoirXavier <xavier@inv.cafe>
