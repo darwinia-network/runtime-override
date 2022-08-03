@@ -45,6 +45,6 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
 
 with open('CHANGELOG', 'a+') as f:
     rts = ", ".join(new_rts)
-    date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    date = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
     f.write(f'Add {rts} - {date}\n')
