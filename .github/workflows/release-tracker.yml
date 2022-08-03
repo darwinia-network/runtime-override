@@ -9,7 +9,7 @@ env:
   RUST_TOOLCHAIN: nightly
   PYTHON_VERSION: "3.10"
   RUNTIME_OVERRIDES_LINK: https://github.com/hack-ink/runtime-overrides/releases/download
-  RUNTIME_OVERRIDES_VERSION: v0.9.0-rc1
+  RUNTIME_OVERRIDES_VERSION: v0.1.0
 jobs:
   track-release:
     runs-on: ubuntu-latest
