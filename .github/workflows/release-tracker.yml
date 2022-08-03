@@ -40,3 +40,4 @@ jobs:
           commit_user_name: AurevoirXavier
           commit_user_email: xavier@inv.cafe
           commit_author: AurevoirXavier <xavier@inv.cafe>
+          commit_message: Apply Automatic Changes
