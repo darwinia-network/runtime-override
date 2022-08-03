@@ -1,12 +1,13 @@
 name: Release tracker
 on:
   schedule:
-    - cron: "*/1 * * * *"
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 env:
   AUTH: ${{ secrets.GITHUB_TOKEN }}
   RUST_TOOLCHAIN: nightly
-  PYTHON_VERSION: 3.10
+  PYTHON_VERSION: "3.10"
 
 jobs:
   track-release:
