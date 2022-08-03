@@ -4,7 +4,7 @@ import os
 import requests
 import subprocess
 
-token = os.environ['GITHUB_READ_TOKEN']
+token = os.environ['AUTH']
 new_rts = []
 
 for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pangolin', 'pangoro'])]:
