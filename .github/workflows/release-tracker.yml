@@ -1,0 +1,35 @@
+name: Release tracker
+on:
+  schedule:
+    - cron: "*/1 * * * *"
+
+env:
+  AUTH: ${{ secrets.GITHUB_TOKEN }}
+  RUST_TOOLCHAIN: nightly
+  PYTHON_VERSION: 3.10
+
+jobs:
+  track-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Rust ${{ env.RUST_TOOLCHAIN }} toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          default: true
+      - name: Install Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Fetch latest code
+        uses: actions/checkout@v3
+      - name: Run
+        run: |
+          pip install -r .github/requirements.txt
+          python3 .github/release-tracker.py
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: AurevoirXavier
+          commit_user_email: xavier@inv.cafe
+          commit_author: AurevoirXavier <xavier@inv.cafe>
