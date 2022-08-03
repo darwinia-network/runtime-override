@@ -7,7 +7,7 @@ import subprocess
 token = os.environ['GITHUB_READ_TOKEN']
 new_rts = []
 
-for (repo, rts) in [('darwinia', ['crab', ]), ('darwinia-common', ['pangolin', 'pangoro'])]:
+for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pangolin', 'pangoro'])]:
     resp = requests.get(
         f'https://api.github.com/repos/darwinia-network/{repo}/releases/latest',
         headers={'Authorization': f'token {token}'})
