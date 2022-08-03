@@ -35,13 +35,13 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
                     if sub_v < sub_v_:
                         v[1] = v_[1]
 
-    if v[1] == '0':
-        tag_ = f'v{v[0]}'
-    else:
-        tag_ = f'v{v[0]}-{v[1]}'
-    if tag != tag_:
-        subprocess.run(['runtime-overrides', '-r', rt, '-t', tag])
-        new_rts.append(f'{rt}-{tag}')
+        if v[1] == '0':
+            tag_ = f'v{v[0]}'
+        else:
+            tag_ = f'v{v[0]}-{v[1]}'
+        if tag != tag_:
+            subprocess.run(['runtime-overrides', '-r', rt, '-t', tag])
+            new_rts.append(f'{rt}-{tag}')
 
 with open('CHANGELOG', 'a+') as f:
     rts = ", ".join(new_rts)

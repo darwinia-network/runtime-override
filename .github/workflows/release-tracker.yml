@@ -8,7 +8,7 @@ env:
   AUTH: ${{ secrets.GITHUB_TOKEN }}
   RUST_TOOLCHAIN: nightly
   PYTHON_VERSION: "3.10"
-  RUNTIME_OVERRIDES_LINK: https://github.com/hack-ink/runtime-overrides/releases/download
+  RUNTIME_OVERRIDES_LINK: https://github.com/darwinia-network/runtime-overrides/releases/download
   RUNTIME_OVERRIDES_VERSION: v0.1.0
 jobs:
   track-release:
@@ -40,3 +40,4 @@ jobs:
           commit_user_name: AurevoirXavier
           commit_user_email: xavier@inv.cafe
           commit_author: AurevoirXavier <xavier@inv.cafe>
+          commit_message: Apply Automatic Changes
