@@ -40,7 +40,7 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
     else:
         tag_ = f'v{v[0]}-{v[1]}'
     if tag != tag_:
-        subprocess.run(['cargo', 'run', '--', '-r', rt, '-t', tag])
+        subprocess.run(['runtime-overrides', '-r', rt, '-t', tag])
         new_rts.append(f'{rt}-{tag}')
 
 with open('CHANGELOG', 'a+') as f:
