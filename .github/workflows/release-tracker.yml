@@ -2,6 +2,7 @@ name: Release tracker
 on:
   schedule:
     - cron: "*/5 * * * *"
+
 jobs:
   track-release:
     runs-on: ubuntu-latest
