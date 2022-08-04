@@ -27,6 +27,11 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
 
             if main_v < main_v_:
                 v[0] = v_[0]
+
+                if len(v_) > 1:
+                    v[1] = v_[1]
+                else:
+                    v[1] = '0'
             elif main_v == main_v_:
                 if len(v_) > 1:
                     sub_v = int(v[1])
@@ -39,7 +44,9 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
             tag_ = f'v{v[0]}'
         else:
             tag_ = f'v{v[0]}-{v[1]}'
+
         if tag != tag_:
+            print(rt, tag, tag_)
             subprocess.run(['runtime-overrides', '-r', rt, '-t', tag])
             new_rts.append(f'{rt}-{tag}')
 
