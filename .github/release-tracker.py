@@ -46,12 +46,12 @@ for (repo, rts) in [('darwinia', ['crab', 'darwinia']), ('darwinia-common', ['pa
             tag_ = f'v{v[0]}-{v[1]}'
 
         if tag != tag_:
-            print(rt, tag, tag_)
             subprocess.run(['runtime-overrides', '-r', rt, '-t', tag])
             new_rts.append(f'{rt}-{tag}')
 
-with open('CHANGELOG', 'a+') as f:
-    rts = ", ".join(new_rts)
-    date = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+if new_rts:
+    with open('CHANGELOG', 'a+') as f:
+        rts = ", ".join(new_rts)
+        date = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
-    f.write(f'Add {rts} - {date}\n')
+        f.write(f'Add {rts} - {date}\n')
