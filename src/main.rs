@@ -30,7 +30,7 @@ pub enum Runtime {
 }
 impl Runtime {
 	fn name(&self) -> String {
-		format!("{:?}", self)
+		format!("{self:?}")
 	}
 
 	fn lowercase_name(&self) -> String {
@@ -55,7 +55,7 @@ impl Runtime {
 
 #[derive(Debug, Parser)]
 struct Cli {
-	/// Specific runtime (non case sensitive)
+	/// Specific runtime (case insensitive).
 	#[clap(
 		arg_enum,
 		short,
@@ -75,10 +75,23 @@ struct Cli {
 		default_value = "main"
 	)]
 	target: String,
+	/// Specific output path.
+	#[clap(
+		short,
+		long,
+		takes_value = true,
+		value_name = "PATH",
+		default_value = "overridden-runtimes"
+	)]
+	output: String,
 }
 
 fn main() -> AnyResult<()> {
-	let Cli { runtime, target } = Cli::parse();
+	let Cli {
+		runtime,
+		target,
+		output,
+	} = Cli::parse();
 	let runtime_source_code_path = format!("build/{}", runtime.repository());
 
 	// TODO: check if the folder is empty
@@ -105,7 +118,7 @@ fn main() -> AnyResult<()> {
 			"--manifest-path",
 			&runtime_manifest,
 			"-p",
-			&format!("{}-runtime", runtime_lowercase_name),
+			&format!("{runtime_lowercase_name}-runtime"),
 		],
 	)?;
 	run(
@@ -122,22 +135,20 @@ fn main() -> AnyResult<()> {
 
 	env::set_current_dir("../../")?;
 
-	let name_prefix = format!("{}-{}-tracing-runtime", runtime_lowercase_name, target);
-	let wasms_dir = format!("overridden-runtimes/{}/wasms", runtime_lowercase_name);
-	let digests_dir = format!("overridden-runtimes/{}/digests", runtime_lowercase_name);
+	let name_prefix = format!("{runtime_lowercase_name}-{target}-tracing-runtime");
+	let wasms_dir = format!("{output}/{runtime_lowercase_name}/wasms");
+	let digests_dir = format!("{output}/{runtime_lowercase_name}/digests");
 
 	create_dir_unchecked(&wasms_dir)?;
 	create_dir_unchecked(&digests_dir)?;
 
-	let wasm_path = format!("{}/{}.compact.compressed.wasm", wasms_dir, name_prefix);
-	let digest_path = format!("{}/{}.json", digests_dir, name_prefix);
+	let wasm_path = format!("{wasms_dir}/{name_prefix}.compact.compressed.wasm");
+	let digest_path = format!("{digests_dir}/{name_prefix}.json");
 
 	fs::rename(
 		format!(
-			"build/{}/target/release/wbuild/{}-runtime/{}_runtime.compact.compressed.wasm",
+			"build/{}/target/release/wbuild/{runtime_lowercase_name}-runtime/{runtime_lowercase_name}_runtime.compact.compressed.wasm",
 			runtime.repository(),
-			runtime_lowercase_name,
-			runtime_lowercase_name,
 		),
 		&wasm_path,
 	)?;
@@ -147,8 +158,8 @@ fn main() -> AnyResult<()> {
 
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
 
-	println!("Generated WASM:   {}", wasm_path);
-	println!("Generated digest: {}", digest_path);
+	println!("Generated WASM:   {wasm_path}");
+	println!("Generated digest: {digest_path}");
 
 	Ok(())
 }
