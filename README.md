@@ -6,7 +6,8 @@ USAGE:
 
 OPTIONS:
     -h, --help               Print help information
-    -r, --runtime <CHAIN>    Specific runtime (non case sensitive) [possible values: darwinia, crab,
+    -o, --output <PATH>      Specific output path [default: overridden-runtimes]
+    -r, --runtime <CHAIN>    Specific runtime (case insensitive) [possible values: darwinia, crab,
                              pangoro, pangolin]
     -t, --target <VALUE>     Specific branch/commit/tag [default: main]
 ```

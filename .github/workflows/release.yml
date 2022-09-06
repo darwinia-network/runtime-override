@@ -24,7 +24,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --lock
+          args: --release --locked
       - name: Prepare release files
         run: |
           mv target/release/runtime-overrides .
