@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  RUST_TOOLCHAIN: nightly
+
+jobs:
+  build:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch latest code
+        uses: actions/checkout@v3
+      - name: Install Rust ${{ env.RUST_TOOLCHAIN }} toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          default: true
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --locked
+      - name: Prepare release files
+        run: |
+          mv target/release/runtime-overrides .
+          tar --zst -cvf runtime-overrides.tar.zst runtime-overrides
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: runtime-overrides.tar.zst
