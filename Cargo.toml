@@ -1,13 +1,13 @@
 [package]
 edition = "2021"
 name    = "runtime-overrides"
-version = "0.3.0"
+version = "0.4.0"
 
 [dependencies]
 # crates.io
 anyhow     = { version = "1.0" }
-clap       = { version = "3.2", features = ["derive"] }
+clap       = { version = "4.2", features = ["derive"] }
 serde_json = { version = "1.0" }
 # github.com
-subwasmlib  = { version = "0.18", git = "https://github.com/chevdor/subwasm", tag = "v0.18.0" }
-wasm-loader = { version = "0.18", git = "https://github.com/chevdor/subwasm", tag = "v0.18.0" }
+subwasmlib  = { version = "0.19.1", git = "https://github.com/AurevoirXavier/subwasm" }
+wasm-loader = { version = "0.19.1", git = "https://github.com/AurevoirXavier/subwasm" }

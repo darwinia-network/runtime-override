@@ -8,7 +8,7 @@ use std::{
 	process::{Command, Stdio},
 };
 // crates.io
-use clap::{ArgEnum, Parser};
+use clap::{Parser, ValueEnum};
 // github.com
 use subwasmlib::Subwasm;
 use wasm_loader::Source;
@@ -22,7 +22,7 @@ macro_rules! match_runtimes {
 	};
 }
 
-#[derive(Clone, Debug, ArgEnum)]
+#[derive(Clone, Debug, ValueEnum)]
 pub enum Runtime {
 	Darwinia,
 	Crab,
@@ -54,27 +54,13 @@ impl Runtime {
 #[derive(Debug, Parser)]
 struct Cli {
 	/// Specific runtime (case insensitive).
-	#[clap(
-		arg_enum,
-		short,
-		long,
-		ignore_case = true,
-		required = true,
-		takes_value = true,
-		value_name = "CHAIN"
-	)]
+	#[clap(value_enum, short, long, ignore_case = true, required = true, value_name = "CHAIN")]
 	runtime: Runtime,
 	/// Specific branch/commit/tag.
-	#[clap(short, long, takes_value = true, value_name = "VALUE", default_value = "main")]
+	#[clap(short, long, value_name = "VALUE", default_value = "main")]
 	target: String,
 	/// Specific output path.
-	#[clap(
-		short,
-		long,
-		takes_value = true,
-		value_name = "PATH",
-		default_value = "overridden-runtimes"
-	)]
+	#[clap(short, long, value_name = "PATH", default_value = "overridden-runtimes")]
 	output: String,
 }
 
@@ -89,7 +75,6 @@ fn main() -> AnyResult<()> {
 
 	env::set_current_dir(runtime_source_code_path)?;
 
-	// TODO: switch to the workspace, use their toolchain configs
 	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
 	let runtime_lowercase_name = runtime.lowercase_name();
 
