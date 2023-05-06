@@ -1,13 +1,33 @@
 # Darwinia Runtime Overrides
 
 ```
-USAGE:
-    runtime-overrides [OPTIONS] --runtime <CHAIN>
+Usage: runtime-override [OPTIONS] --github <URI> --manifest <PATH> --runtime <NAME>
 
-OPTIONS:
-    -h, --help               Print help information
-    -o, --output <PATH>      Specific output path [default: overridden-runtimes]
-    -r, --runtime <CHAIN>    Specific runtime (case insensitive) [possible values: darwinia, crab,
-                             pangoro, pangolin]
-    -t, --target <VALUE>     Specific branch/commit/tag [default: main]
+Options:
+  -g, --github <URI>
+          GitHub repository
+
+  -t, --target <VALUE>
+          Specific branch/commit/tag
+
+          [default: main]
+
+  -m, --manifest <PATH>
+          Runtime manifest path
+
+  -r, --runtime <NAME>
+          Runtime name
+
+  -o, --output <PATH>
+          Specific output path
+
+          [default: overridden-runtimes]
+
+  -c, --cache
+          Whether to cache the build or not.
+
+          Don't use this in production environments.
+
+  -h, --help
+          Print help (see a summary with '-h')
 ```

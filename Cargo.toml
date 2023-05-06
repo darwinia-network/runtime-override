@@ -1,7 +1,11 @@
 [package]
 edition = "2021"
 name    = "runtime-override"
-version = "0.4.1"
+version = "0.5.0"
+
+[[bin]]
+name = "rtor"
+path = "src/main.rs"
 
 [dependencies]
 # crates.io

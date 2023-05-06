@@ -27,9 +27,9 @@ jobs:
           args: --release --locked
       - name: Prepare release files
         run: |
-          mv target/release/runtime-overrides .
-          tar --zst -cvf runtime-overrides.tar.zst runtime-overrides
+          mv target/release/rtor .
+          tar --zst -cvf rtor.tar.zst rtor
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: runtime-overrides.tar.zst
+          files: rtor.tar.zst
