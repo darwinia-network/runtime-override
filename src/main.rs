@@ -1,5 +1,3 @@
-pub use anyhow::Result as AnyResult;
-
 // std
 use std::{
 	env,
@@ -8,99 +6,71 @@ use std::{
 	process::{Command, Stdio},
 };
 // crates.io
-use clap::{Parser, ValueEnum};
+pub use anyhow::Result;
+use clap::Parser;
 // github.com
 use subwasmlib::Subwasm;
 use wasm_loader::Source;
 
-macro_rules! match_runtimes {
-	($self:ident, $a:expr, $b:expr) => {
-		match $self {
-			Runtime::Darwinia | Runtime::Crab => $a,
-			Runtime::Pangoro | Runtime::Pangolin => $b,
-		}
-	};
-}
-
-#[derive(Clone, Debug, ValueEnum)]
-pub enum Runtime {
-	Darwinia,
-	Crab,
-	Pangoro,
-	Pangolin,
-}
-impl Runtime {
-	fn name(&self) -> String {
-		format!("{self:?}")
-	}
-
-	fn lowercase_name(&self) -> String {
-		self.name().to_ascii_lowercase()
-	}
-
-	fn github(&self) -> String {
-		format!("https://github.com/darwinia-network/{}", self.repository())
-	}
-
-	fn repository(&self) -> &str {
-		match_runtimes!(self, "darwinia", "darwinia-common")
-	}
-
-	fn path(&self) -> String {
-		format!("{}/{}", match_runtimes!(self, "runtime", "node/runtime"), self.lowercase_name())
-	}
-}
-
 #[derive(Debug, Parser)]
 struct Cli {
-	/// Specific runtime (case insensitive).
-	#[clap(value_enum, short, long, ignore_case = true, required = true, value_name = "CHAIN")]
-	runtime: Runtime,
+	/// GitHub repository.
+	#[clap(value_enum, short, long, required = true, value_name = "URI")]
+	github: String,
 	/// Specific branch/commit/tag.
 	#[clap(short, long, value_name = "VALUE", default_value = "main")]
 	target: String,
+	/// Runtime manifest path.
+	#[clap(value_enum, short, long, required = true, value_name = "PATH")]
+	manifest: String,
+	/// Runtime name.
+	#[clap(value_enum, short, long, required = true, value_name = "NAME")]
+	runtime: String,
 	/// Specific output path.
 	#[clap(short, long, value_name = "PATH", default_value = "overridden-runtimes")]
 	output: String,
+	/// Whether to cache the build or not.
+	///
+	/// Don't use this in production environments.
+	#[clap(short, long)]
+	cache: bool,
 }
 
-fn main() -> AnyResult<()> {
-	let Cli { runtime, target, output } = Cli::parse();
-	let runtime_source_code_path = format!("build/{}", runtime.repository());
+fn main() -> Result<()> {
+	let Cli { github, target, manifest, runtime, output, cache } = Cli::parse();
 
-	// TODO: check if the folder is empty
-	if !Path::new(&runtime_source_code_path).exists() {
-		run("git", &["clone", &runtime.github(), &runtime_source_code_path])?;
+	if !cache {
+		println!("[runtime-override] cleaning up the cache");
+
+		let _ = fs::remove_dir_all("build");
+	} else {
+		println!("[runtime-override] using the cache");
 	}
 
-	env::set_current_dir(runtime_source_code_path)?;
+	let repository = github.rsplit_once('/').expect("unexpected GitHub URI").1;
+	let build_path = format!("build/{repository}");
 
-	let runtime_manifest = format!("{}/Cargo.toml", runtime.path());
-	let runtime_lowercase_name = runtime.lowercase_name();
+	if !Path::new(&build_path).exists() {
+		run("git", &["clone", &github, &build_path], &[])?;
+	}
 
-	run("git", &["fetch", "--all"])?;
-	run("git", &["checkout", &target])?;
+	println!("[runtime-override] setting current working directory to {build_path}");
+	env::set_current_dir(build_path)?;
+
+	run("git", &["fetch", "--all"], &[])?;
+	run("git", &["checkout", &target], &[])?;
+	run("rustup", &["show"], &["RUSTUP_TOOLCHAIN"])?;
 	run(
 		"cargo",
-		&[
-			"clean",
-			"--release",
-			"--manifest-path",
-			&runtime_manifest,
-			"-p",
-			&format!("{runtime_lowercase_name}-runtime"),
-		],
-	)?;
-	run(
-		"cargo",
-		&["b", "--release", "--manifest-path", &runtime_manifest, "--features", "evm-tracing"],
+		&["build", "--release", "--manifest-path", &manifest, "--features", "evm-tracing"],
+		&["RUSTUP_TOOLCHAIN"],
 	)?;
 
 	env::set_current_dir("../../")?;
 
-	let name_prefix = format!("{runtime_lowercase_name}-{target}-tracing-runtime");
-	let wasms_dir = format!("{output}/{runtime_lowercase_name}/wasms");
-	let digests_dir = format!("{output}/{runtime_lowercase_name}/digests");
+	let name_prefix = format!("{runtime}-{target}-tracing-runtime");
+	let wasms_dir = format!("{output}/{runtime}/wasms");
+	let digests_dir = format!("{output}/{runtime}/digests");
 
 	create_dir_unchecked(&wasms_dir)?;
 	create_dir_unchecked(&digests_dir)?;
@@ -110,8 +80,7 @@ fn main() -> AnyResult<()> {
 
 	fs::rename(
 		format!(
-			"build/{}/target/release/wbuild/{runtime_lowercase_name}-runtime/{runtime_lowercase_name}_runtime.compact.compressed.wasm",
-			runtime.repository(),
+			"build/{repository}/target/release/wbuild/{runtime}-runtime/{runtime}_runtime.compact.compressed.wasm",
 		),
 		&wasm_path,
 	)?;
@@ -121,13 +90,13 @@ fn main() -> AnyResult<()> {
 
 	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
 
-	println!("Generated WASM:   {wasm_path}");
-	println!("Generated digest: {digest_path}");
+	println!("[runtime-override] generated WASM:   {wasm_path}");
+	println!("[runtime-override] generated digest: {digest_path}");
 
 	Ok(())
 }
 
-fn create_dir_unchecked(path: &str) -> AnyResult<()> {
+fn create_dir_unchecked(path: &str) -> Result<()> {
 	if !Path::new(path).exists() {
 		fs::create_dir_all(path)?;
 	}
@@ -135,8 +104,16 @@ fn create_dir_unchecked(path: &str) -> AnyResult<()> {
 	Ok(())
 }
 
-fn run(program: &str, args: &[&str]) -> AnyResult<()> {
-	Command::new(program).args(args).stderr(Stdio::inherit()).output()?;
+fn run(program: &str, args: &[&str], exclude_envs: &[&str]) -> Result<()> {
+	println!("[runtime-override] running `{program} {}`", args.join(" "));
+
+	let mut c = Command::new(program);
+
+	c.args(args);
+	exclude_envs.iter().for_each(|e| {
+		c.env_remove(e);
+	});
+	c.stdout(Stdio::inherit()).stderr(Stdio::inherit()).output()?;
 
 	Ok(())
 }
