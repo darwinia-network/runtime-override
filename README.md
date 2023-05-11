@@ -1,4 +1,4 @@
-# Darwinia Runtime Overrides
+# Darwinia Runtime Override
 
 ```
 Usage: rtor [OPTIONS] --github <URI> --manifest <PATH> --runtime <NAME>
