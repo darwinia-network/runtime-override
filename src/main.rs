@@ -3,7 +3,7 @@ use std::{
 	env,
 	fs::{self, File},
 	path::Path,
-	process::{Command, Stdio},
+	process::{self, Command, Stdio},
 };
 // crates.io
 pub use anyhow::Result;
@@ -113,7 +113,12 @@ fn run(program: &str, args: &[&str], exclude_envs: &[&str]) -> Result<()> {
 	exclude_envs.iter().for_each(|e| {
 		c.env_remove(e);
 	});
-	c.stdout(Stdio::inherit()).stderr(Stdio::inherit()).output()?;
 
-	Ok(())
+	let r = c.stdout(Stdio::inherit()).stderr(Stdio::inherit()).output()?;
+
+	if r.status.success() {
+		Ok(())
+	} else {
+		process::exit(r.status.code().unwrap_or(-1));
+	}
 }
