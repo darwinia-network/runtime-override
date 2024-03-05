@@ -21,7 +21,10 @@ Options:
   -o, --output <PATH>
           Specific output path
 
-          [default: overridden-runtimes]
+          [default: .]
+
+  -n, --no-digest
+          Specify not to generate the digest file
 
   -c, --cache
           Whether to cache the build or not.
@@ -29,5 +32,4 @@ Options:
           Don't use this in production environments.
 
   -h, --help
-          Print help (see a summary with '-h')
 ```
