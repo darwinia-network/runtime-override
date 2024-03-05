@@ -1,7 +1,7 @@
 [package]
 edition = "2021"
 name    = "runtime-override"
-version = "0.5.1"
+version = "0.5.2"
 
 [[bin]]
 name = "rtor"
@@ -10,8 +10,8 @@ path = "src/main.rs"
 [dependencies]
 # crates.io
 anyhow     = { version = "1.0" }
-clap       = { version = "4.2", features = ["derive"] }
+clap       = { version = "4.5", features = ["derive"] }
 serde_json = { version = "1.0" }
 # github.com
-subwasmlib  = { version = "0.19.1", git = "https://github.com/AurevoirXavier/subwasm" }
-wasm-loader = { version = "0.19.1", git = "https://github.com/AurevoirXavier/subwasm" }
+subwasmlib  = { version = "0.20.0", git = "https://github.com/chevdor/subwasm" }
+wasm-loader = { version = "0.20.0", git = "https://github.com/chevdor/subwasm" }

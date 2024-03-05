@@ -15,29 +15,32 @@ use wasm_loader::Source;
 #[derive(Debug, Parser)]
 struct Cli {
 	/// GitHub repository.
-	#[clap(value_enum, short, long, required = true, value_name = "URI")]
+	#[clap(value_enum, long, short, required = true, value_name = "URI")]
 	github: String,
 	/// Specific branch/commit/tag.
-	#[clap(short, long, value_name = "VALUE", default_value = "main")]
+	#[clap(long, short, value_name = "VALUE", default_value_t = String::from("main"))]
 	target: String,
 	/// Runtime manifest path.
-	#[clap(value_enum, short, long, required = true, value_name = "PATH")]
+	#[clap(value_enum, long, short, required = true, value_name = "PATH")]
 	manifest: String,
 	/// Runtime name.
-	#[clap(value_enum, short, long, required = true, value_name = "NAME")]
+	#[clap(value_enum, long, short, required = true, value_name = "NAME")]
 	runtime: String,
 	/// Specific output path.
-	#[clap(short, long, value_name = "PATH", default_value = "overridden-runtimes")]
+	#[clap(long, short, value_name = "PATH", default_value_t = String::from("."))]
 	output: String,
+	/// Specify not to generate the digest file.
+	#[clap(long, short)]
+	no_digest: bool,
 	/// Whether to cache the build or not.
 	///
 	/// Don't use this in production environments.
-	#[clap(short, long)]
+	#[clap(long, short)]
 	cache: bool,
 }
 
 fn main() -> Result<()> {
-	let Cli { github, target, manifest, runtime, output, cache } = Cli::parse();
+	let Cli { github, target, manifest, runtime, output, no_digest, cache } = Cli::parse();
 
 	if !cache {
 		println!("[runtime-override] cleaning up the cache");
@@ -54,7 +57,7 @@ fn main() -> Result<()> {
 		run("git", &["clone", &github, &build_path], &[])?;
 	}
 
-	println!("[runtime-override] setting current working directory to {build_path}");
+	println!("[runtime-override] setting working directory to {build_path}");
 	env::set_current_dir(build_path)?;
 
 	run("git", &["fetch", "--all"], &[])?;
@@ -69,14 +72,11 @@ fn main() -> Result<()> {
 	env::set_current_dir("../../")?;
 
 	let name_prefix = format!("{runtime}-{target}-tracing-runtime");
-	let wasms_dir = format!("{output}/{runtime}/wasms");
-	let digests_dir = format!("{output}/{runtime}/digests");
 
-	create_dir_unchecked(&wasms_dir)?;
-	create_dir_unchecked(&digests_dir)?;
+	create_dir_unchecked(&output)?;
 
-	let wasm_path = format!("{wasms_dir}/{name_prefix}.compact.compressed.wasm");
-	let digest_path = format!("{digests_dir}/{name_prefix}.json");
+	let wasm_path = format!("{output}/{name_prefix}.compact.compressed.wasm");
+	let digest_path = format!("{output}/{name_prefix}.json");
 
 	fs::rename(
 		format!(
@@ -85,13 +85,17 @@ fn main() -> Result<()> {
 		&wasm_path,
 	)?;
 
-	let wasm = Subwasm::new(&Source::File(wasm_path.clone().into()));
-	let runtime_info = File::create(&digest_path)?;
-
-	serde_json::to_writer(runtime_info, wasm.runtime_info())?;
+	let wasm = Subwasm::new(&Source::File(wasm_path.clone().into()))?;
+	let runtime_info = wasm.runtime_info();
 
 	println!("[runtime-override] generated WASM:   {wasm_path}");
-	println!("[runtime-override] generated digest: {digest_path}");
+	println!("[runtime-override] runtime info: {runtime_info}");
+
+	if !no_digest {
+		serde_json::to_writer(File::create(&digest_path)?, runtime_info)?;
+
+		println!("[runtime-override] generated digest: {digest_path}");
+	}
 
 	Ok(())
 }
