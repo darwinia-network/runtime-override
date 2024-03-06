@@ -75,7 +75,7 @@ fn main() -> Result<()> {
 
 	env::set_current_dir("../../")?;
 
-	let name_prefix = format!("{runtime}-{target}-{}-runtime", features.replace(',', "-"));
+	let name_prefix = format!("{runtime}-{target}-{}", features.replace(',', "-"));
 
 	create_dir_unchecked(&output)?;
 
