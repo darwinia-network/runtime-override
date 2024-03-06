@@ -26,6 +26,9 @@ struct Cli {
 	/// Runtime name.
 	#[clap(value_enum, long, short, required = true, value_name = "NAME")]
 	runtime: String,
+	/// Enable features to be passed directly to Cargo.
+	#[clap(long, short, value_name = "FEATURES")]
+	features: String,
 	/// Specific output path.
 	#[clap(long, short, value_name = "PATH", default_value_t = String::from("."))]
 	output: String,
@@ -40,7 +43,8 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-	let Cli { github, target, manifest, runtime, output, no_digest, cache } = Cli::parse();
+	let Cli { github, target, manifest, runtime, features, output, no_digest, cache } =
+		Cli::parse();
 
 	if !cache {
 		println!("[runtime-override] cleaning up the cache");
@@ -65,13 +69,13 @@ fn main() -> Result<()> {
 	run("rustup", &["show"], &["RUSTUP_TOOLCHAIN"])?;
 	run(
 		"cargo",
-		&["build", "--release", "--manifest-path", &manifest, "--features", "evm-tracing"],
+		&["build", "--release", "--manifest-path", &manifest, "--features", &features],
 		&["RUSTUP_TOOLCHAIN"],
 	)?;
 
 	env::set_current_dir("../../")?;
 
-	let name_prefix = format!("{runtime}-{target}-tracing-runtime");
+	let name_prefix = format!("{runtime}-{target}-{}-runtime", features.replace(',', "-"));
 
 	create_dir_unchecked(&output)?;
 
